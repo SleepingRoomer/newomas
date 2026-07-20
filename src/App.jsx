@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef } from "react";
+import OrganigrammeAntenne from "./OrganigrammeAntenne.jsx";
 
 // ============================================================
 //  OMAS : la restructuration, à ton échelle
@@ -1276,49 +1277,31 @@ export default function App() {
           anime un groupe humain (ta promo). Trois mots, trois fonctions.
         </div>
 
-        {/* ============================================================
-            ORGANIGRAMMES
-            Schéma général (optionnel, si la place le permet) : ajoute-le au-dessus
-            du bloc "orga-antenne" en suivant le même gabarit (.orga-scroll > .orga-fixe).
-            Organigramme d'antenne : remplace le contenu du <div className="orga-fixe">
-            ci-dessous par le SVG fourni, par exemple :
-              <svg viewBox="0 0 800 600" role="img" aria-labelledby="orga-titre" style={{ width: "100%", height: "auto", display: "block" }}>
-                <title id="orga-titre">Organigramme d'une antenne OMAS</title>
-                …
-              </svg>
-            Le viewBox rend le SVG responsive (width: 100% / height: auto). Le conteneur
-            .orga-scroll garde un défilement horizontal sur petit écran plutôt que
-            d'écraser le schéma ; le zoom tactile (pincer) reste disponible car le
-            viewport de la page n'impose pas de maximum-scale.
-        ============================================================ */}
+        {/* Organigramme de l'antenne : rendu à sa taille native pour rester lisible,
+            avec défilement horizontal (conteneur en pleine largeur d'écran pour
+            limiter le scroll aux écrans vraiment étroits) ; le zoom tactile reste
+            disponible, le viewport de la page n'impose pas de maximum-scale. */}
         <div
-          className="orga-scroll"
           style={{
             marginTop: 26,
-            border: `1px solid ${C.voile}`,
-            borderRadius: 16,
-            background: C.blanc,
-            padding: 18,
-            overflowX: "auto",
+            marginLeft: "calc(50% - 50vw)",
+            marginRight: "calc(50% - 50vw)",
+            width: "100vw",
           }}
         >
-          <div className="orga-fixe" style={{ minWidth: 640 }}>
+          <div className="orga-scroll" style={{ overflowX: "auto", padding: "0 16px" }}>
             <div
               style={{
-                border: `1px dashed ${C.brume}`,
-                borderRadius: 12,
-                padding: "44px 24px",
-                textAlign: "center",
-                color: C.brume,
+                minWidth: 1240,
+                maxWidth: 1240,
+                margin: "0 auto",
+                border: `1px solid ${C.voile}`,
+                borderRadius: 16,
+                background: C.blanc,
+                padding: 18,
               }}
             >
-              <div style={{ fontWeight: 700, fontSize: 16, color: C.encre, marginBottom: 6 }}>
-                Organigramme de l'antenne
-              </div>
-              <div style={{ fontSize: 14 }}>
-                Emplacement réservé : le schéma arrive ici dès qu'il est fourni (voir le
-                commentaire dans le code pour l'intégrer).
-              </div>
+              <OrganigrammeAntenne />
             </div>
           </div>
         </div>
