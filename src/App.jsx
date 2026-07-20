@@ -107,7 +107,7 @@ const TRIPTYQUE = [
     detail:
       "Le socle pédagogique. Au-delà du tutorat PASS/LAS/LSPS, un accompagnement méthodologique continu tout au long des études de santé.",
     actions: [
-      "Assister à un concours blanc PASS/LAS encadré par le PRP",
+      "Assister à un concours blanc PASS/LAS",
       "Participer à un forum d'orientation pour éclairer son parcours",
       "Accéder aux ressources pédagogiques approfondies du parcours",
     ],
@@ -140,7 +140,7 @@ const TRIPTYQUE = [
       "La boussole. Le soignant de demain se construit une pensée : sur la fin de vie, le soin, la relation, le sens de son engagement.",
     actions: [
       "Assister à un atelier sur la loi fin de vie animé par un réanimateur",
-      "Débattre d'un cas concret en séance éthique et spiritualité",
+      "Débattre d'un cas concret en séance éthique",
       "Confronter ses convictions à la réalité du terrain de soin",
     ],
   },
@@ -271,7 +271,7 @@ const ROLES = {
     cercle: 1,
     accent: C.bleuClair,
     pitch:
-      "Tu organises les séances éthique et spiritualité, les ateliers avec des intervenants (comme celui sur la loi fin de vie).",
+      "Tu organises les séances d'éthique, les ateliers avec des intervenants (comme celui sur la loi fin de vie).",
     entree: "Poste électif, campagne de candidatures.",
   },
   delSolidarites: {
