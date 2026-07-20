@@ -24,6 +24,17 @@ const C = {
   blanc: "#FFFFFF",
 };
 
+// ---------- Élévation : ombres teintées bleu marine, cohérentes sur tout le site ----------
+const OMBRE = {
+  carte: "0 1px 2px rgba(30,32,96,0.05), 0 14px 30px -14px rgba(30,32,96,0.18)",
+  carteHover: "0 4px 10px rgba(30,32,96,0.08), 0 22px 44px -14px rgba(30,32,96,0.26)",
+};
+
+function surElevation(e, active) {
+  e.currentTarget.style.transform = active ? "translateY(-4px)" : "translateY(0)";
+  e.currentTarget.style.boxShadow = active ? OMBRE.carteHover : OMBRE.carte;
+}
+
 // ---------- Données : les 3 dimensions du triptyque ----------
 const TRIPTYQUE = [
   {
@@ -450,6 +461,7 @@ function BandeauCandidature() {
         gap: 22,
         alignItems: "flex-start",
         flexWrap: "wrap",
+        boxShadow: OMBRE.carte,
       }}
     >
       <span
@@ -502,12 +514,16 @@ function CarteRole({ role, label, labelColor }) {
   if (!r) return null;
   return (
     <div
+      onMouseEnter={(e) => surElevation(e, true)}
+      onMouseLeave={(e) => surElevation(e, false)}
       style={{
         background: C.blanc,
         borderRadius: 16,
         padding: "24px 24px 22px",
         border: `1px solid ${C.voile}`,
         borderTop: `4px solid ${r.accent}`,
+        boxShadow: OMBRE.carte,
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
       }}
     >
       <div
@@ -586,6 +602,7 @@ function Test() {
           padding: "48px 36px",
           textAlign: "center",
           color: C.blanc,
+          boxShadow: OMBRE.carteHover,
         }}
       >
         <Eyebrow color={C.or}>Test · 2 minutes</Eyebrow>
@@ -613,6 +630,14 @@ function Test() {
         </p>
         <button
           onClick={() => setEtape(0)}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-2px)";
+            e.currentTarget.style.filter = "drop-shadow(0 12px 24px rgba(0,0,0,0.35))";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.filter = "none";
+          }}
           style={{
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: 16,
@@ -623,6 +648,7 @@ function Test() {
             borderRadius: 40,
             padding: "15px 38px",
             cursor: "pointer",
+            transition: "transform 0.15s ease, filter 0.15s ease",
           }}
         >
           Commencer le test
@@ -634,7 +660,7 @@ function Test() {
   // Résultat
   if (fini && resultat) {
     return (
-      <div ref={testRef}>
+      <div ref={testRef} style={{ borderRadius: 22, boxShadow: OMBRE.carteHover }}>
         <div
           style={{
             background: `linear-gradient(135deg, ${C.tealFonce}, ${C.bleuFonce})`,
@@ -705,6 +731,12 @@ function Test() {
           <div style={{ textAlign: "center" }}>
             <button
               onClick={recommencer}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = C.voile;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
               style={{
                 fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
                 fontSize: 15,
@@ -715,6 +747,7 @@ function Test() {
                 borderRadius: 40,
                 padding: "12px 30px",
                 cursor: "pointer",
+                transition: "background 0.15s ease",
               }}
             >
               Refaire le test
@@ -737,6 +770,7 @@ function Test() {
         borderRadius: 22,
         padding: "36px 32px 40px",
         border: `1px solid ${C.voile}`,
+        boxShadow: OMBRE.carte,
       }}
     >
       <div
@@ -854,6 +888,7 @@ function FormulaireQuestions() {
           borderRadius: 18,
           padding: "32px 30px",
           textAlign: "center",
+          boxShadow: OMBRE.carte,
         }}
       >
         <h4
@@ -880,6 +915,7 @@ function FormulaireQuestions() {
         borderRadius: 18,
         padding: "30px 28px",
         border: `1px solid ${C.voile}`,
+        boxShadow: OMBRE.carte,
       }}
     >
       <h4
@@ -932,6 +968,14 @@ function FormulaireQuestions() {
       />
       <button
         onClick={envoyer}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = C.bleuFonce;
+          e.currentTarget.style.transform = "translateY(-2px)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = C.bleu;
+          e.currentTarget.style.transform = "translateY(0)";
+        }}
         style={{
           fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
           fontSize: 15,
@@ -942,6 +986,7 @@ function FormulaireQuestions() {
           borderRadius: 40,
           padding: "14px 34px",
           cursor: "pointer",
+          transition: "background 0.15s ease, transform 0.15s ease",
         }}
       >
         Envoyer ma question
@@ -1034,6 +1079,14 @@ export default function App() {
           </p>
           <a
             href="#test"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.filter = "drop-shadow(0 14px 28px rgba(0,0,0,0.4))";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.filter = "drop-shadow(0 8px 20px rgba(0,0,0,0.3))";
+            }}
             style={{
               display: "inline-block",
               fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -1044,11 +1097,35 @@ export default function App() {
               borderRadius: 40,
               padding: "15px 36px",
               textDecoration: "none",
+              filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.3))",
+              transition: "transform 0.15s ease, filter 0.15s ease",
             }}
           >
             Trouve ton rôle en 2 minutes
           </a>
         </div>
+        <svg
+          aria-hidden
+          className="indice-scroll"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          style={{
+            display: "block",
+            margin: "40px auto 0",
+            position: "relative",
+            opacity: 0.7,
+          }}
+        >
+          <path
+            d="M4 9L12 17L20 9"
+            stroke={C.or}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
 
       {/* ---------- POURQUOI, À TON ÉCHELLE ---------- */}
@@ -1116,11 +1193,15 @@ export default function App() {
           {TRIPTYQUE.map((t) => (
             <div
               key={t.cle}
+              onMouseEnter={(e) => surElevation(e, true)}
+              onMouseLeave={(e) => surElevation(e, false)}
               style={{
                 background: t.voile,
                 borderRadius: 18,
                 padding: "28px 26px",
                 borderTop: `5px solid ${t.accent}`,
+                boxShadow: OMBRE.carte,
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
               }}
             >
               <h3
@@ -1238,12 +1319,16 @@ export default function App() {
           ].map((p) => (
             <div
               key={p.n}
+              onMouseEnter={(e) => surElevation(e, true)}
+              onMouseLeave={(e) => surElevation(e, false)}
               style={{
                 background: C.blanc,
                 borderRadius: 14,
                 padding: "20px 18px",
                 border: `1px solid ${C.voile}`,
                 borderLeft: `4px solid ${p.c}`,
+                boxShadow: OMBRE.carte,
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
               }}
             >
               <div
@@ -1299,6 +1384,7 @@ export default function App() {
                 borderRadius: 16,
                 background: C.blanc,
                 padding: 18,
+                boxShadow: OMBRE.carte,
               }}
             >
               <OrganigrammeAntenne />
@@ -1347,15 +1433,21 @@ export default function App() {
 
         {[
           {
-            titre: "1 · Tes portes d'entrée",
+            numero: 1,
+            titre: "Tes portes d'entrée",
             sub: "Accessibles tout de suite, sans campagne de candidatures.",
             couleur: C.teal,
+            badgeBg: C.tealFonce,
+            badgeTexte: C.blanc,
             roles: ["tuteur", "parrain", "chargeMission"],
           },
           {
-            titre: "2 · Les postes de ton antenne",
+            numero: 2,
+            titre: "Les postes de ton antenne",
             sub: "L'équipe de ton campus. C'est ici que s'ouvrent les candidatures.",
             couleur: C.bleu,
+            badgeBg: C.bleu,
+            badgeTexte: C.blanc,
             roles: [
               "respAntenne",
               "delSavoir",
@@ -1368,9 +1460,12 @@ export default function App() {
             ],
           },
           {
-            titre: "3 · Tes perspectives en localité",
+            numero: 3,
+            titre: "Tes perspectives en localité",
             sub: "Pour plus tard, quand tu voudras porter plus grand qu'un campus.",
             couleur: C.orFonce,
+            badgeBg: C.orFonce,
+            badgeTexte: C.encre,
             roles: ["respPoleLoc", "bureauLoc", "refPortefeuille"],
           },
         ].map((cercle) => (
@@ -1378,12 +1473,31 @@ export default function App() {
             <div
               style={{
                 display: "flex",
-                alignItems: "baseline",
+                alignItems: "center",
                 gap: 14,
                 marginBottom: 18,
                 flexWrap: "wrap",
               }}
             >
+              <span
+                aria-hidden
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  background: cercle.badgeBg,
+                  color: cercle.badgeTexte,
+                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  flexShrink: 0,
+                }}
+              >
+                {cercle.numero}
+              </span>
               <h3
                 style={{
                   fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -1408,12 +1522,16 @@ export default function App() {
                 return (
                   <div
                     key={rk}
+                    onMouseEnter={(e) => surElevation(e, true)}
+                    onMouseLeave={(e) => surElevation(e, false)}
                     style={{
                       background: C.papier,
                       borderRadius: 12,
                       padding: "16px 16px",
                       border: `1px solid ${C.voile}`,
                       borderLeft: `3px solid ${r.accent}`,
+                      boxShadow: OMBRE.carte,
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
                     }}
                   >
                     <div
@@ -1497,11 +1615,21 @@ export default function App() {
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: 22,
             color: C.blanc,
-            marginBottom: 8,
+            marginBottom: 10,
           }}
         >
           OMAS
         </div>
+        <div
+          aria-hidden
+          style={{
+            width: 40,
+            height: 3,
+            borderRadius: 3,
+            background: C.or,
+            margin: "0 auto 16px",
+          }}
+        />
         Compétence · Engagement · Éthique · Antennes Île-de-France · 2026
       </footer>
     </div>
