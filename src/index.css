@@ -47,6 +47,19 @@ textarea:focus-visible {
   -webkit-overflow-scrolling: touch;
 }
 
+@keyframes rebond-doux {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.indice-scroll {
+  animation: rebond-doux 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
