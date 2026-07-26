@@ -16,6 +16,14 @@ body {
   min-height: 100svh;
 }
 
+/* Sous ce seuil, 5 liens + le logo ne tiennent plus sur une seule ligne dans
+   la barre sticky (hauteur fixe) : on masque la nav plutôt que l'écraser. */
+@media (max-width: 760px) {
+  .topbar-nav {
+    display: none !important;
+  }
+}
+
 button,
 input,
 textarea {
