@@ -7,6 +7,9 @@ import {
   FileText,
   CheckCircle,
   X,
+  Hourglass,
+  LockKey,
+  PaperPlaneTilt,
 } from "@phosphor-icons/react";
 import OrganigrammeAntenne from "./OrganigrammeAntenne.jsx";
 
@@ -471,6 +474,98 @@ const FICHES = {
   },
 };
 
+// ---------- Formulaire de candidature : postes ouverts et leurs questions ----------
+const POSTE_LIST = [
+  "respAntenne",
+  "delSavoir",
+  "respPRP",
+  "delEthique",
+  "delSolidarites",
+  "delLogistique",
+  "delComm",
+  "refPromo",
+];
+
+const POSTE_QUESTIONS = {
+  respAntenne: {
+    competence: "Précisez votre campus, votre année d'étude, et votre vision en quelques lignes pour l'antenne cette année.",
+    valeurs: "Qu'est-ce qui vous donnerait envie de porter la responsabilité de toute une communauté étudiante, plutôt qu'une seule mission ?",
+  },
+  delSavoir: {
+    competence: "Précisez votre expérience d'accompagnement méthodologique ou de mutualisation de ressources, et ce que vous aimeriez améliorer sur votre campus.",
+    valeurs: "Qu'est-ce qui, dans le fait de transmettre une méthode plutôt qu'un savoir ponctuel, vous parle personnellement ?",
+  },
+  respPRP: {
+    competence: "Précisez votre expérience de tutorat, le nombre de tuteurs que vous pensez pouvoir mobiliser, et le concours que vous connaissez le mieux.",
+    valeurs: "Racontez un moment où vous avez vu quelqu'un progresser grâce à vous. Qu'est-ce que ça vous a fait ?",
+  },
+  delEthique: {
+    competence: "Précisez un sujet éthique qui vous tient à cœur et comment vous animeriez un échange dessus.",
+    valeurs: "Le triptyque de l'OMAS place l'éthique au même rang que la compétence et l'engagement. Pourquoi cette dimension compte-t-elle pour vous, dans votre future pratique de soignant ?",
+  },
+  delSolidarites: {
+    competence: "Précisez une action solidaire que vous avez menée ou aimeriez lancer sur votre campus.",
+    valeurs: "Qu'est-ce que servir les autres, avant même d'être diplômé, représente pour vous ?",
+  },
+  delLogistique: {
+    competence: "Précisez une organisation logistique que vous avez déjà menée, même modeste.",
+    valeurs: "Ce poste se voit peu et se remarque surtout quand quelque chose manque. Qu'est-ce qui vous motive dans un rôle qui demande de la rigueur plus que de la visibilité ?",
+  },
+  delComm: {
+    competence: "Précisez vos outils de prédilection (visuel, vidéo, rédaction) et un exemple de contenu que vous avez produit.",
+    valeurs: "Qu'auriez-vous envie que les gens ressentent en découvrant l'OMAS à travers ce que vous publiez ?",
+  },
+  refPromo: {
+    competence: "Précisez votre promotion et pourquoi vous voulez être ce point de contact.",
+    valeurs: "Qu'est-ce que vous aimeriez qu'un camarade de votre promo ressente en sachant qu'il peut se tourner vers vous ?",
+  },
+};
+
+// ==== CONFIGURATION GOOGLE FORM (candidature) ====
+// Formulaire : "Candidature Antenne OMAS"
+// https://docs.google.com/forms/d/e/1FAIpQLSdRU_VNhbyDOEsGfCFMDnVW7E2gn6oQwfR5Yu09mMp3bfng-Q/viewform
+const GOOGLE_FORM_ACTION_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSdRU_VNhbyDOEsGfCFMDnVW7E2gn6oQwfR5Yu09mMp3bfng-Q/formResponse";
+const GOOGLE_FORM_FIELDS = {
+  prenomNom: "entry.621192451",
+  email: "entry.1259729682",
+  campus: "entry.1740388283",
+  anneeFiliere: "entry.769357271",
+  motivation: "entry.1682605124",
+  ordrePostes: "entry.1306058184",
+  postes: {
+    respAntenne: { competence: "entry.1702122848", valeurs: "entry.1571863979" },
+    delSavoir: { competence: "entry.1962427621", valeurs: "entry.1558166777" },
+    respPRP: { competence: "entry.2051041900", valeurs: "entry.1532740468" },
+    delEthique: { competence: "entry.157198701", valeurs: "entry.420741420" },
+    delSolidarites: { competence: "entry.1547746428", valeurs: "entry.2092266740" },
+    delLogistique: { competence: "entry.1586038474", valeurs: "entry.932272086" },
+    delComm: { competence: "entry.1830815083", valeurs: "entry.11561215" },
+    refPromo: { competence: "entry.1839402481", valeurs: "entry.1788734151" },
+  },
+};
+
+function envoyerCandidature(payload) {
+  const fd = new FormData();
+  fd.append(GOOGLE_FORM_FIELDS.prenomNom, payload.prenomNom);
+  fd.append(GOOGLE_FORM_FIELDS.email, payload.email);
+  fd.append(GOOGLE_FORM_FIELDS.campus, payload.campus);
+  fd.append(GOOGLE_FORM_FIELDS.anneeFiliere, payload.anneeFiliere);
+  fd.append(GOOGLE_FORM_FIELDS.motivation, payload.motivation);
+  fd.append(GOOGLE_FORM_FIELDS.ordrePostes, payload.ordrePostes);
+  payload.postesChoisis.forEach((key) => {
+    const champs = GOOGLE_FORM_FIELDS.postes[key];
+    const rep = payload.reponses[key] || {};
+    if (champs) {
+      fd.append(champs.competence, rep.competence || "");
+      fd.append(champs.valeurs, rep.valeurs || "");
+    }
+  });
+  // mode "no-cors" : Google renvoie une réponse opaque, on ne peut pas lire le succès,
+  // mais la soumission passe. L'appelant bascule sur l'écran de confirmation de façon optimiste.
+  return fetch(GOOGLE_FORM_ACTION_URL, { method: "POST", mode: "no-cors", body: fd });
+}
+
 // ---------- Le test : questions à deux axes ----------
 // Chaque option pèse sur un pôle (mission) et/ou un mode (type d'action).
 const QUESTIONS = [
@@ -878,7 +973,7 @@ function CarteRole({ role, label, labelColor, onOpenFiche }) {
 }
 
 // ---------- Modale fiche de poste ----------
-function ModaleFiche({ role, onClose }) {
+function ModaleFiche({ role, onClose, onCandidater }) {
   useEffect(() => {
     if (!role) return;
     const onKey = (e) => {
@@ -1064,9 +1159,9 @@ function ModaleFiche({ role, onClose }) {
             Comment candidater
           </div>
           <p style={{ fontSize: 14.5, color: C.encre, lineHeight: 1.6, margin: "0 0 14px" }}>{fiche.candidater}</p>
-          <a
-            href="#candidature"
-            onClick={onClose}
+          <button
+            type="button"
+            onClick={() => onCandidater(role)}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -1076,13 +1171,14 @@ function ModaleFiche({ role, onClose }) {
               fontWeight: 700,
               color: C.blanc,
               background: C.bleu,
+              border: "none",
+              cursor: "pointer",
               padding: "11px 22px",
               borderRadius: 999,
-              textDecoration: "none",
             }}
           >
-            Voir les modalités de candidature <ArrowRight size={15} weight="bold" />
-          </a>
+            Candidater à ce poste <ArrowRight size={15} weight="bold" />
+          </button>
         </div>
       </div>
     </div>
@@ -1090,7 +1186,7 @@ function ModaleFiche({ role, onClose }) {
 }
 
 // ---------- Le test ----------
-function Test({ onOpenFiche }) {
+function Test({ onOpenFiche, onCandidater }) {
   const [etape, setEtape] = useState(-1); // -1 = intro, 0..n = questions, n = résultat
   const [reponses, setReponses] = useState(Array(QUESTIONS.length).fill(null));
   const testRef = useRef(null);
@@ -1245,8 +1341,9 @@ function Test({ onOpenFiche }) {
             Ce test est une boussole, pas un verdict. Tu peux candidater à n'importe quel poste qui t'inspire.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 6, flexWrap: "wrap" }}>
-            <a
-              href="#candidature"
+            <button
+              type="button"
+              onClick={() => onCandidater(FICHES[resultat.cible] ? resultat.cible : null)}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -1256,13 +1353,14 @@ function Test({ onOpenFiche }) {
                 fontWeight: 700,
                 padding: "13px 28px",
                 borderRadius: 999,
-                textDecoration: "none",
+                border: "none",
+                cursor: "pointer",
                 color: cta.ctaActive ? C.blanc : C.brume,
                 background: cta.ctaActive ? C.tealFonce : C.voile,
               }}
             >
               {cta.ctaLabel} <ArrowRight size={16} weight="bold" />
-            </a>
+            </button>
           </div>
           <div style={{ textAlign: "center", marginTop: 4 }}>
             <button
@@ -1528,6 +1626,422 @@ function FormulaireQuestions() {
   );
 }
 
+// ---------- Champ de formulaire (input / textarea) ----------
+function champStyle(hasErr, touched, textarea) {
+  return {
+    width: "100%",
+    boxSizing: "border-box",
+    fontFamily: FONT,
+    fontSize: 15,
+    background: C.papier,
+    border: `1.5px solid ${touched && hasErr ? "#D9534F" : "rgba(45,47,132,0.14)"}`,
+    borderRadius: 12,
+    padding: "13px 15px",
+    color: C.encre,
+    outline: "none",
+    ...(textarea ? { resize: "vertical", lineHeight: 1.5 } : {}),
+  };
+}
+
+const CHAMP_LABEL_STYLE = {
+  display: "block",
+  fontFamily: FONT,
+  fontSize: 13,
+  fontWeight: 700,
+  color: "#4A4B63",
+  marginBottom: 6,
+};
+
+// ---------- Modale de candidature ----------
+function ModaleCandidature({ open, posteInitial, onClose }) {
+  const [common, setCommonState] = useState({ prenomNom: "", email: "", campus: "", anneeFiliere: "", motivation: "" });
+  const [postes, setPostesState] = useState(["", "", ""]);
+  const [reponses, setReponsesState] = useState({});
+  const [touched, setTouched] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setSubmitted(false);
+    setTouched(false);
+    setErrors({});
+    if (posteInitial) setPostesState((p) => (p[0] ? p : [posteInitial, p[1], p[2]]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const phase = phaseCandidature(new Date());
+
+  const setCommonField = (field, value) => setCommonState((c) => ({ ...c, [field]: value }));
+  const setPoste = (slot, value) => {
+    setPostesState((prev) => {
+      const next = [...prev];
+      next[slot] = value;
+      if (value) {
+        next.forEach((v, i) => {
+          if (i !== slot && v === value) next[i] = "";
+        });
+      }
+      return next;
+    });
+  };
+  const setReponse = (key, field, value) =>
+    setReponsesState((r) => ({ ...r, [key]: { ...(r[key] || {}), [field]: value } }));
+
+  const postesChoisis = postes.filter(Boolean);
+  const posteOptions = (slotIdx, placeholder) => {
+    const opts = POSTE_LIST.filter((k) => postes[slotIdx] === k || !postes.includes(k)).map((k) => ({
+      value: k,
+      label: ROLES[k].nom,
+    }));
+    return [{ value: "", label: placeholder }, ...opts];
+  };
+
+  const submit = () => {
+    const errs = {};
+    ["prenomNom", "email", "campus", "anneeFiliere", "motivation"].forEach((f) => {
+      if (!common[f] || !common[f].trim()) errs[f] = true;
+    });
+    if (postesChoisis.length === 0) errs.poste0 = true;
+    postesChoisis.forEach((key) => {
+      const rep = reponses[key] || {};
+      if (!rep.competence || !rep.competence.trim()) errs[key + "_competence"] = true;
+      if (!rep.valeurs || !rep.valeurs.trim()) errs[key + "_valeurs"] = true;
+    });
+    if (Object.keys(errs).length > 0) {
+      setTouched(true);
+      setErrors(errs);
+      return;
+    }
+    setSubmitting(true);
+    setErrors({});
+    const ordrePostes = postesChoisis.map((k) => ROLES[k].nom).join(" > ");
+    envoyerCandidature({ ...common, ordrePostes, postesChoisis, reponses })
+      .then(() => {
+        setSubmitting(false);
+        setSubmitted(true);
+      })
+      .catch(() => {
+        setSubmitting(false);
+        setSubmitted(true);
+      });
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(20,21,55,0.6)",
+        zIndex: 110,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: C.blanc,
+          borderRadius: 22,
+          maxWidth: 680,
+          width: "100%",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          padding: "34px 30px 30px",
+          position: "relative",
+          boxShadow: "0 30px 70px rgba(20,21,55,0.35)",
+        }}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fermer"
+          style={{
+            position: "absolute",
+            top: 18,
+            right: 18,
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "none",
+            background: C.voile,
+            color: C.bleu,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <X size={18} weight="bold" />
+        </button>
+
+        <div
+          style={{
+            fontFamily: FONT,
+            fontSize: 12,
+            fontWeight: 800,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: C.tealFonce,
+            marginBottom: 8,
+          }}
+        >
+          Candidature
+        </div>
+        <h3 style={{ fontFamily: FONT, fontSize: 25, fontWeight: 800, color: C.bleu, margin: "0 0 22px" }}>
+          Rejoindre l'équipe de ton antenne
+        </h3>
+
+        {phase === "avant" && (
+          <div style={{ background: C.voile, borderRadius: 16, padding: "26px 24px", textAlign: "center" }}>
+            <Hourglass size={32} color={C.bleu} />
+            <p style={{ fontFamily: FONT, fontSize: 15.5, color: C.encre, lineHeight: 1.6, margin: "14px 0 0", fontWeight: 500 }}>
+              Les candidatures ouvrent le lundi 27 juillet à 00h00. Reviens à ce moment pour déposer la tienne, ton
+              choix de poste restera libre ce jour-là.
+            </p>
+          </div>
+        )}
+
+        {phase === "apres" && (
+          <div style={{ background: "#F3F2ED", borderRadius: 16, padding: "26px 24px", textAlign: "center" }}>
+            <LockKey size={32} color={C.brume} />
+            <p style={{ fontFamily: FONT, fontSize: 15.5, color: C.encre, lineHeight: 1.6, margin: "14px 0 0", fontWeight: 500 }}>
+              La fenêtre de candidature 2026 est close. Merci pour ton intérêt, à très vite pour la suite.
+            </p>
+          </div>
+        )}
+
+        {phase === "pendant" && submitted && (
+          <div style={{ textAlign: "center", padding: "20px 10px 10px" }}>
+            <div
+              style={{
+                width: 74,
+                height: 74,
+                borderRadius: "50%",
+                background: C.voileTeal,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 22px",
+              }}
+            >
+              <CheckCircle size={36} weight="fill" color={C.tealFonce} />
+            </div>
+            <h4 style={{ fontFamily: FONT, fontSize: 22, color: C.bleu, margin: "0 0 10px", fontWeight: 800 }}>
+              Candidature envoyée, merci !
+            </h4>
+            <p style={{ fontSize: 15, color: C.brume, lineHeight: 1.6, margin: "0 0 24px" }}>
+              On revient vers toi après la clôture, avec une réponse humaine.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                fontFamily: FONT,
+                fontSize: 15,
+                fontWeight: 700,
+                color: C.bleu,
+                background: C.papier,
+                border: "1.5px solid rgba(45,47,132,0.2)",
+                padding: "12px 26px",
+                borderRadius: 12,
+                cursor: "pointer",
+              }}
+            >
+              Fermer
+            </button>
+          </div>
+        )}
+
+        {phase === "pendant" && !submitted && (
+          <>
+            {touched && Object.keys(errors).length > 0 && (
+              <div
+                style={{
+                  background: "rgba(217,83,79,0.1)",
+                  border: "1px solid rgba(217,83,79,0.3)",
+                  borderRadius: 12,
+                  padding: "14px 16px",
+                  marginBottom: 20,
+                  fontFamily: FONT,
+                  fontSize: 14,
+                  color: "#B23B36",
+                  fontWeight: 600,
+                }}
+              >
+                Certains champs sont manquants ou incomplets : ils sont signalés ci-dessous.
+              </div>
+            )}
+
+            <div style={{ fontFamily: FONT, fontSize: 12, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: C.bleu, marginBottom: 12 }}>
+              1. Tes informations
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginBottom: 14 }}>
+              <div>
+                <label style={CHAMP_LABEL_STYLE}>Prénom et nom</label>
+                <input
+                  type="text"
+                  value={common.prenomNom}
+                  onChange={(e) => setCommonField("prenomNom", e.target.value)}
+                  placeholder="Ton prénom et nom"
+                  style={champStyle(errors.prenomNom, touched)}
+                />
+              </div>
+              <div>
+                <label style={CHAMP_LABEL_STYLE}>Adresse email</label>
+                <input
+                  type="email"
+                  value={common.email}
+                  onChange={(e) => setCommonField("email", e.target.value)}
+                  placeholder="toi@exemple.fr"
+                  style={champStyle(errors.email, touched)}
+                />
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginBottom: 14 }}>
+              <div>
+                <label style={CHAMP_LABEL_STYLE}>Campus ou université</label>
+                <input
+                  type="text"
+                  value={common.campus}
+                  onChange={(e) => setCommonField("campus", e.target.value)}
+                  placeholder="Ton campus"
+                  style={champStyle(errors.campus, touched)}
+                />
+              </div>
+              <div>
+                <label style={CHAMP_LABEL_STYLE}>Année d'étude et filière</label>
+                <input
+                  type="text"
+                  value={common.anneeFiliere}
+                  onChange={(e) => setCommonField("anneeFiliere", e.target.value)}
+                  placeholder="ex. P2 Médecine, LAS Droit, D2…"
+                  style={champStyle(errors.anneeFiliere, touched)}
+                />
+              </div>
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <label style={CHAMP_LABEL_STYLE}>Pourquoi rejoindre l'OMAS, en quelques mots</label>
+              <textarea
+                rows={3}
+                value={common.motivation}
+                onChange={(e) => setCommonField("motivation", e.target.value)}
+                placeholder="Quelques phrases suffisent."
+                style={champStyle(errors.motivation, touched, true)}
+              />
+            </div>
+
+            <div style={{ fontFamily: FONT, fontSize: 12, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: C.bleu, marginBottom: 4 }}>
+              2. Tes choix de poste
+            </div>
+            <p style={{ fontFamily: FONT, fontSize: 13.5, color: C.brume, margin: "0 0 14px" }}>
+              Un poste au minimum, jusqu'à trois par ordre de préférence.
+            </p>
+            <div style={{ display: "grid", gap: 12, marginBottom: 24 }}>
+              {["1er choix", "2e choix (optionnel)", "3e choix (optionnel)"].map((label, slot) => (
+                <div key={slot}>
+                  <label style={CHAMP_LABEL_STYLE}>{label}</label>
+                  <select
+                    value={postes[slot]}
+                    onChange={(e) => setPoste(slot, e.target.value)}
+                    style={champStyle(slot === 0 && errors.poste0, touched)}
+                  >
+                    {posteOptions(slot, slot === 0 ? "Choisis un poste" : "Aucun (optionnel)").map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+
+            {postesChoisis.length > 0 && (
+              <>
+                <div style={{ fontFamily: FONT, fontSize: 12, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: C.bleu, marginBottom: 14 }}>
+                  3. Tes réponses par poste
+                </div>
+                {postesChoisis.map((key) => {
+                  const rep = reponses[key] || {};
+                  const q = POSTE_QUESTIONS[key];
+                  return (
+                    <div key={key} style={{ background: C.papier, border: `1px solid ${C.voile}`, borderRadius: 14, padding: "20px 20px 18px", marginBottom: 16 }}>
+                      <div style={{ fontFamily: FONT, fontSize: 15, fontWeight: 800, color: C.bleu, marginBottom: 14 }}>{ROLES[key].nom}</div>
+                      <div style={{ marginBottom: 14 }}>
+                        <label style={{ display: "block", fontFamily: FONT, fontSize: 13.5, fontWeight: 600, color: C.encre, lineHeight: 1.4, marginBottom: 6 }}>
+                          {q.competence}
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={rep.competence || ""}
+                          onChange={(e) => setReponse(key, "competence", e.target.value)}
+                          style={champStyle(errors[key + "_competence"], touched, true)}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: "block", fontFamily: FONT, fontSize: 13.5, fontWeight: 600, color: C.encre, lineHeight: 1.4, marginBottom: 6 }}>
+                          {q.valeurs}
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={rep.valeurs || ""}
+                          onChange={(e) => setReponse(key, "valeurs", e.target.value)}
+                          style={champStyle(errors[key + "_valeurs"], touched, true)}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={submit}
+              disabled={submitting}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                fontFamily: FONT,
+                fontSize: 16,
+                fontWeight: 700,
+                color: C.blanc,
+                background: C.teal,
+                padding: 15,
+                borderRadius: 12,
+                border: "none",
+                cursor: submitting ? "default" : "pointer",
+                marginTop: 6,
+                opacity: submitting ? 0.7 : 1,
+              }}
+            >
+              {submitting ? "Envoi en cours…" : "Envoyer ma candidature"} <PaperPlaneTilt size={18} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ============================================================
 //  Page
 // ============================================================
@@ -1535,6 +2049,14 @@ export default function App() {
   const [modalRole, setModalRole] = useState(null);
   const ouvrirFiche = (role) => setModalRole(role);
   const fermerFiche = () => setModalRole(null);
+
+  const [candidature, setCandidature] = useState({ open: false, posteInitial: null });
+  const ouvrirCandidatureGenerale = () => setCandidature({ open: true, posteInitial: null });
+  const ouvrirCandidatureDepuisFiche = (role) => {
+    setModalRole(null);
+    setCandidature({ open: true, posteInitial: role });
+  };
+  const fermerCandidature = () => setCandidature((c) => ({ ...c, open: false }));
 
   const cercles = [
     {
@@ -2255,7 +2777,7 @@ export default function App() {
               Le test qui te trouve une place.
             </h2>
           </div>
-          <Test onOpenFiche={ouvrirFiche} />
+          <Test onOpenFiche={ouvrirFiche} onCandidater={(role) => setCandidature({ open: true, posteInitial: role })} />
         </div>
       </Section>
 
@@ -2280,6 +2802,28 @@ export default function App() {
         </h2>
         <div style={{ display: "grid", gap: 22 }}>
           <BandeauCandidature />
+          <div style={{ textAlign: "center" }}>
+            <button
+              type="button"
+              onClick={ouvrirCandidatureGenerale}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                fontFamily: FONT,
+                fontSize: 15,
+                fontWeight: 700,
+                padding: "13px 28px",
+                borderRadius: 999,
+                border: "none",
+                cursor: "pointer",
+                color: PHASE_CONTENU[phaseCandidature(new Date())].ctaActive ? C.blanc : C.brume,
+                background: PHASE_CONTENU[phaseCandidature(new Date())].ctaActive ? C.tealFonce : C.voile,
+              }}
+            >
+              {PHASE_CONTENU[phaseCandidature(new Date())].ctaLabel} <ArrowRight size={16} weight="bold" />
+            </button>
+          </div>
           <FormulaireQuestions />
         </div>
       </Section>
@@ -2291,7 +2835,8 @@ export default function App() {
         Compétence · Engagement · Éthique · Antennes Île-de-France · 2026
       </footer>
 
-      <ModaleFiche role={modalRole} onClose={fermerFiche} />
+      <ModaleFiche role={modalRole} onClose={fermerFiche} onCandidater={ouvrirCandidatureDepuisFiche} />
+      <ModaleCandidature open={candidature.open} posteInitial={candidature.posteInitial} onClose={fermerCandidature} />
     </div>
   );
 }
