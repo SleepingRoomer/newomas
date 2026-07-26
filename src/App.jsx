@@ -10,6 +10,12 @@ import {
   Hourglass,
   LockKey,
   PaperPlaneTilt,
+  UserFocus,
+  ShieldCheck,
+  DoorOpen,
+  HandCoins,
+  MagnifyingGlass,
+  SealCheck,
 } from "@phosphor-icons/react";
 import OrganigrammeAntenne from "./OrganigrammeAntenne.jsx";
 
@@ -110,7 +116,7 @@ const TRIPTYQUE = [
     detail:
       "Le socle pédagogique. Au-delà du tutorat PASS/LAS/LSPS, un accompagnement méthodologique continu tout au long des études de santé.",
     actions: [
-      "Assister à un concours blanc PASS/LAS",
+      "Assister à un concours blanc PASS/LAS encadré par le PRP",
       "Participer à un forum d'orientation pour éclairer son parcours",
       "Accéder aux ressources pédagogiques approfondies du parcours",
     ],
@@ -143,7 +149,7 @@ const TRIPTYQUE = [
       "La boussole. Le soignant de demain se construit une pensée : sur la fin de vie, le soin, la relation, le sens de son engagement.",
     actions: [
       "Assister à un atelier sur la loi fin de vie animé par un réanimateur",
-      "Débattre d'un cas concret en séance éthique",
+      "Débattre d'un cas concret en séance éthique et spiritualité",
       "Confronter ses convictions à la réalité du terrain de soin",
     ],
   },
@@ -218,6 +224,19 @@ const POLES_INFO = [
   { n: "Communication", d: "Réseaux, image, rayonnement", c: C.bleu },
 ];
 
+// ---------- Données : l'engagement réciproque de l'OMAS envers ses responsables ----------
+const ENGAGEMENTS_OMAS = [
+  { Icone: GraduationCap, titre: "Une formation réelle", detail: "Module d'entrée et accompagnement dans la prise de poste." },
+  { Icone: UserFocus, titre: "Un interlocuteur identifié", detail: "Quelqu'un qui répond, en cas de question ou de difficulté." },
+  { Icone: ShieldCheck, titre: "Le respect du temps personnel", detail: "Examens et vie privée passent avant, sans justification à donner." },
+  { Icone: DoorOpen, titre: "Le droit de partir sans drame", detail: "Avec préavis, et sans reproche." },
+  {
+    Icone: HandCoins,
+    titre: "La reconnaissance",
+    detail: "Un rôle visible, qui ouvre à des responsabilités plus larges. Les frais engagés sont remboursés : nul ne doit payer pour servir.",
+  },
+];
+
 // ---------- Données : les rôles orientés par le test ----------
 // cercle : 0 = porte d'entrée · 1 = antenne · 2 = localité
 const ROLES = {
@@ -274,7 +293,7 @@ const ROLES = {
     cercle: 1,
     accent: C.bleuClair,
     pitch:
-      "Tu organises les séances d'éthique, les ateliers avec des intervenants (comme celui sur la loi fin de vie).",
+      "Tu organises les séances éthique et spiritualité, les ateliers avec des intervenants (comme celui sur la loi fin de vie).",
     entree: "Poste électif, campagne de candidatures.",
   },
   delSolidarites: {
@@ -640,12 +659,64 @@ const QUESTIONS = [
       { t: "Une culture éthique que j'ai contribué à installer", pole: "ethique", mode: "operer" },
     ],
   },
+  {
+    q: "Un étudiant de PASS vient te voir, un peu perdu. Ton premier réflexe :",
+    opts: [
+      { t: "Je le mets en lien avec un tuteur qui pourra le suivre dans la durée, sur le concours", pole: "savoir", mode: "operer", discriminant: "respPRP" },
+      { t: "Je lui parle méthode : comment il organise son temps, ses fiches, sa révision", pole: "savoir", mode: "operer", discriminant: "delSavoir" },
+      { t: "Je regarde s'il a besoin d'un tout autre type de soutien, pas seulement pédagogique", pole: "solidarites", mode: "accompagner" },
+      { t: "Je le renvoie vers le forum d'orientation pour qu'il prenne du recul sur son parcours", pole: "savoir", mode: "operer", discriminant: "delSavoir" },
+    ],
+  },
+  {
+    q: "Ce qui te motiverait le plus dans une mission sur un an :",
+    opts: [
+      { t: "Voir la progression méthodologique de toute une génération d'étudiants, peu importe le concours qu'ils visent", pole: "savoir", mode: "coordonner", discriminant: "delSavoir" },
+      { t: "Faire monter en compétence une équipe de tuteurs que tu as recrutée toi-même", pole: "savoir", mode: "coordonner", discriminant: "respPRP" },
+      { t: "Organiser un concours blanc du début à la fin, dans le détail", pole: "savoir", mode: "coordonner", discriminant: "respPRP" },
+      { t: "Créer une ressource qui sera réutilisée par toutes les antennes après ton passage", pole: "savoir", mode: "coordonner", discriminant: "delSavoir" },
+    ],
+  },
+  {
+    q: "Ta promo traverse une période difficile (rythme de révisions intense, moral en baisse). Tu es plutôt du genre à :",
+    opts: [
+      { t: "Organiser une action collective concrète pour lever un peu la pression (sortie, moment convivial, mobilisation)", pole: "solidarites", mode: "operer", discriminant: "delSolidarites" },
+      { t: "Prendre des nouvelles individuellement, être le contact de confiance de chacun", pole: "solidarites", mode: "accompagner", discriminant: "refPromo" },
+      { t: "Remonter le signal à qui de droit pour qu'une réponse structurelle soit trouvée", pole: "coordination", mode: "coordonner" },
+      { t: "Proposer une séance de réflexion sur le sens de ce qu'on traverse", pole: "ethique", mode: "operer" },
+    ],
+  },
+  {
+    q: "La veille d'un grand événement de l'antenne, ce qui te stresserait le plus à l'idée que ce ne soit pas prêt :",
+    opts: [
+      { t: "Que le matériel ou la salle ne soit pas au point", pole: "logistique", mode: "operer", discriminant: "delLogistique" },
+      { t: "Que personne n'ait vu passer l'annonce et que la salle soit vide", pole: "communication", mode: "operer", discriminant: "delComm" },
+      { t: "Que le contenu de la séance elle-même ne soit pas assez préparé", pole: "savoir", mode: "operer" },
+      { t: "Que l'ambiance ne soit pas assez chaleureuse pour les nouveaux", pole: "solidarites", mode: "accompagner" },
+    ],
+  },
+  {
+    q: "Si on te confiait une équipe, tu préférerais qu'elle soit composée de :",
+    opts: [
+      { t: "Plusieurs délégués aux missions très différentes, que tu dois faire travailler ensemble malgré leurs priorités parfois divergentes", pole: "coordination", mode: "coordonner", discriminant: "respAntenne" },
+      { t: "Une seule équipe resserrée, toute tournée vers un même objectif précis", pole: "coordination", mode: "coordonner", discriminant: "autrePole" },
+      { t: "Je préfère ne pas avoir à gérer une équipe, juste bien faire ma mission", mode: "operer" },
+      { t: "Des personnes que j'accompagne individuellement plutôt qu'une équipe à piloter", mode: "accompagner" },
+    ],
+  },
+];
+
+const PAIRES_AMBIGUES = [
+  ["delSavoir", "respPRP"],
+  ["delSolidarites", "refPromo"],
+  ["delLogistique", "delComm"],
 ];
 
 // ---------- Moteur de scoring ----------
 function calculerResultat(reponses) {
   const scPole = {};
   const scMode = { accompagner: 0, operer: 0, coordonner: 0 };
+  const scDiscrim = {};
   let coordination = 0;
 
   reponses.forEach((opt) => {
@@ -653,6 +724,7 @@ function calculerResultat(reponses) {
     if (opt.pole === "coordination") coordination += 1;
     else if (opt.pole) scPole[opt.pole] = (scPole[opt.pole] || 0) + 1;
     if (opt.mode) scMode[opt.mode] += 1;
+    if (opt.discriminant) scDiscrim[opt.discriminant] = (scDiscrim[opt.discriminant] || 0) + 1;
   });
 
   const poleTop =
@@ -699,6 +771,23 @@ function calculerResultat(reponses) {
     cible = mapOpere[poleTop] || "delSavoir";
   }
 
+  // --- Départage fin via le signal discriminant, quand le résultat croisé tombe sur une paire ambiguë ---
+  for (const [a, b] of PAIRES_AMBIGUES) {
+    if (cible === a || cible === b) {
+      const scoreA = scDiscrim[a] || 0;
+      const scoreB = scDiscrim[b] || 0;
+      if (scoreA !== scoreB) cible = scoreA > scoreB ? a : b;
+    }
+  }
+  if (cible === "respAntenne") {
+    const scoreAntenne = scDiscrim.respAntenne || 0;
+    const scoreAutrePole = scDiscrim.autrePole || 0;
+    if (scoreAutrePole > scoreAntenne) {
+      const alt = mapCoord[poleTop];
+      if (alt && alt !== "respAntenne") cible = alt;
+    }
+  }
+
   // --- Perspective localité (cercle 2) si forte coordination ---
   let perspective = null;
   if (coordination >= 4) {
@@ -715,6 +804,47 @@ function phaseCandidature(maintenant) {
   if (maintenant < ouverture) return "avant";
   if (maintenant > cloture) return "apres";
   return "pendant";
+}
+
+function formatDateFr(d) {
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+}
+
+// ---------- Frise des étapes de la candidature (au-delà de la fenêtre de dépôt) ----------
+function calculerFrise(maintenant) {
+  const ouverture = new Date("2026-07-27T00:00:00");
+  const cloture = new Date("2026-08-02T23:59:59");
+  const instructionFin = new Date("2026-08-10T23:59:59");
+  const nomination = new Date("2026-08-14T00:00:00");
+  const debutInstruction = new Date(cloture.getTime() + 24 * 3600 * 1000);
+  const jalons = [ouverture, cloture, instructionFin, nomination];
+  const idx = jalons.findIndex((d) => maintenant < d);
+  const activeIdx = idx === -1 ? jalons.length : idx;
+
+  const definitions = [
+    { titre: "Ouverture des candidatures", Icone: DoorOpen, dateLabel: formatDateFr(ouverture) },
+    { titre: "Clôture des candidatures", Icone: LockKey, dateLabel: formatDateFr(cloture) },
+    {
+      titre: "Instruction & examen",
+      Icone: MagnifyingGlass,
+      dateLabel: `${formatDateFr(debutInstruction)} – ${formatDateFr(instructionFin)}`,
+    },
+    { titre: "Nomination", Icone: SealCheck, dateLabel: formatDateFr(nomination) },
+  ];
+
+  const etapes = definitions.map((def, i) => {
+    const statut = i < activeIdx ? "done" : i === activeIdx ? "current" : "upcoming";
+    const style =
+      statut === "done"
+        ? { dotBg: C.teal, dotColor: C.blanc, dotBorder: C.teal, titleColor: C.tealFonce, weight: "fill" }
+        : statut === "current"
+        ? { dotBg: C.or, dotColor: C.bleuFonce, dotBorder: C.or, titleColor: C.bleu, weight: "fill" }
+        : { dotBg: C.blanc, dotColor: "#B9BCD6", dotBorder: "#D8DAEA", titleColor: C.brume, weight: "regular" };
+    return { ...def, statut, ...style };
+  });
+
+  const progressFraction = Math.min(1, activeIdx / (jalons.length - 1));
+  return { etapes, lineWidth: `${progressFraction * 75}%` };
 }
 
 const PHASE_CONTENU = {
@@ -807,21 +937,56 @@ function Topbar() {
           gap: 20,
         }}
       >
-        <span style={{ fontFamily: FONT, fontSize: 19, fontWeight: 800, color: C.bleu, letterSpacing: "-0.01em" }}>
-          OMAS
-        </span>
-        <span
-          style={{
-            fontFamily: FONT,
-            fontSize: 13.5,
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: C.brume,
-          }}
-        >
-          Antennes Île-de-France
-        </span>
+        <a href="#top" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}>
+          <img src={`${import.meta.env.BASE_URL}assets/logo-omas.png`} alt="OMAS" style={{ height: 36, width: "auto" }} />
+          <span style={{ fontFamily: FONT, fontSize: 19, fontWeight: 800, color: C.bleu, letterSpacing: "-0.01em" }}>
+            OMAS
+          </span>
+          <span
+            style={{
+              fontFamily: FONT,
+              fontSize: 12.5,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: C.brume,
+              borderLeft: "1px solid rgba(45,47,132,0.15)",
+              paddingLeft: 10,
+              marginLeft: 2,
+            }}
+          >
+            Antennes IDF
+          </span>
+        </a>
+        <nav className="topbar-nav" style={{ display: "flex", alignItems: "center", gap: 22 }}>
+          <a href="#pourquoi" style={{ fontFamily: FONT, fontSize: 14, fontWeight: 600, color: "#4A4B63", textDecoration: "none" }}>
+            Pourquoi
+          </a>
+          <a href="#roles" style={{ fontFamily: FONT, fontSize: 14, fontWeight: 600, color: "#4A4B63", textDecoration: "none" }}>
+            Les rôles
+          </a>
+          <a href="#test" style={{ fontFamily: FONT, fontSize: 14, fontWeight: 600, color: "#4A4B63", textDecoration: "none" }}>
+            Le test
+          </a>
+          <a href="#organigramme" style={{ fontFamily: FONT, fontSize: 14, fontWeight: 600, color: "#4A4B63", textDecoration: "none" }}>
+            Organigramme
+          </a>
+          <a
+            href="#candidature"
+            style={{
+              fontFamily: FONT,
+              fontSize: 14,
+              fontWeight: 700,
+              color: C.blanc,
+              background: C.teal,
+              padding: "9px 20px",
+              borderRadius: 999,
+              textDecoration: "none",
+            }}
+          >
+            Candidater
+          </a>
+        </nav>
       </div>
     </header>
   );
@@ -1247,7 +1412,7 @@ function Test({ onOpenFiche, onCandidater }) {
             fontSize: 16,
           }}
         >
-          Huit questions, aucune mauvaise réponse. À la fin, on te montre une porte
+          Treize questions, aucune mauvaise réponse. À la fin, on te montre une porte
           d'entrée accessible dès maintenant, et le poste vers lequel ton profil penche.
         </p>
         <button
@@ -2058,6 +2223,8 @@ export default function App() {
   };
   const fermerCandidature = () => setCandidature((c) => ({ ...c, open: false }));
 
+  const frise = calculerFrise(new Date());
+
   const cercles = [
     {
       numero: 1,
@@ -2093,6 +2260,7 @@ export default function App() {
 
   return (
     <div
+      id="top"
       style={{
         fontFamily: FONT,
         color: C.encre,
@@ -2217,7 +2385,7 @@ export default function App() {
       </div>
 
       {/* ---------- POURQUOI, À TON ÉCHELLE ---------- */}
-      <Section style={{ background: C.papier, paddingBottom: 20 }}>
+      <Section id="pourquoi" style={{ background: C.papier, paddingBottom: 20, scrollMarginTop: 76 }}>
         <Eyebrow>Le pourquoi, à ton échelle</Eyebrow>
         <h2
           style={{
@@ -2585,7 +2753,7 @@ export default function App() {
       </Section>
 
       {/* ---------- LA NOUVELLE ORGANISATION ---------- */}
-      <Section style={{ background: C.blanc, borderTop: "1px solid rgba(45,47,132,0.07)" }}>
+      <Section id="organigramme" style={{ background: C.blanc, borderTop: "1px solid rgba(45,47,132,0.07)", scrollMarginTop: 76 }}>
         <Eyebrow>La nouvelle organisation</Eyebrow>
         <h2
           style={{
@@ -2634,23 +2802,29 @@ export default function App() {
         </div>
 
         <div
+          className="orga-scroll"
           style={{
             border: "1px solid rgba(45,47,132,0.1)",
             borderRadius: 18,
             background: C.papier,
-            padding: "36px 28px",
+            padding: "36px 24px",
             boxShadow: OMBRE.carte,
+            overflowX: "auto",
           }}
         >
           <OrganigrammeAntenne />
         </div>
-        <p style={{ fontSize: 12, color: C.brume, textAlign: "center", marginTop: 12 }}>
-          Tous les délégués de pôle sont au même échelon d'antenne, sous le·la référent·e.
+        <p style={{ fontSize: 12.5, color: C.brume, textAlign: "center", lineHeight: 1.7, marginTop: 14 }}>
+          Les cadres pointillés (équipe PRP, chargés de mission) épaulent une mission précise, selon les besoins : ce
+          ne sont pas des postes électifs. L'axe filières est un repère informatif, hors hiérarchie.
+          <br />
+          Responsable : décide et conçoit · Délégué : opère et relaie sur le campus · Référent : anime un périmètre
+          humain (la promotion).
         </p>
       </Section>
 
       {/* ---------- LES RÔLES, EN 3 CERCLES ---------- */}
-      <Section style={{ background: C.blanc, borderTop: "1px solid rgba(45,47,132,0.07)" }}>
+      <Section id="roles" style={{ background: C.blanc, borderTop: "1px solid rgba(45,47,132,0.07)", scrollMarginTop: 76 }}>
         <Eyebrow>Les rôles, concrètement</Eyebrow>
         <h2
           style={{
@@ -2781,6 +2955,67 @@ export default function App() {
         </div>
       </Section>
 
+      {/* ---------- CE QUE L'OMAS DOIT EN RETOUR ---------- */}
+      <Section style={{ background: C.papier, paddingBottom: 20 }}>
+        <Eyebrow>Un engagement réciproque</Eyebrow>
+        <h2
+          style={{
+            fontFamily: FONT,
+            letterSpacing: "-0.02em",
+            fontWeight: 800,
+            fontSize: "clamp(26px, 3.6vw, 38px)",
+            lineHeight: 1.15,
+            margin: "0 0 18px",
+            maxWidth: 720,
+            color: C.bleu,
+          }}
+        >
+          Ce que l'OMAS doit en retour.
+        </h2>
+        <p style={{ fontSize: 16.5, color: C.brume, lineHeight: 1.7, maxWidth: 680, margin: "0 0 36px", fontWeight: 500 }}>
+          Avant sa prise de fonction, chaque responsable signe un cadre d'engagement réciproque. L'OMAS s'y engage à
+          cinq choses.
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 }}>
+          {ENGAGEMENTS_OMAS.map((e) => (
+            <div
+              key={e.titre}
+              style={{
+                background: C.blanc,
+                borderRadius: 16,
+                padding: "24px 20px",
+                border: "1px solid rgba(45,47,132,0.1)",
+                boxShadow: OMBRE.carte,
+                flex: "1 1 300px",
+                maxWidth: 320,
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 11,
+                  background: C.voileOr,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 14,
+                }}
+              >
+                <e.Icone size={20} color={C.orFonce} />
+              </div>
+              <h3 style={{ fontFamily: FONT, fontSize: 15.5, fontWeight: 800, color: C.encre, margin: "0 0 6px" }}>{e.titre}</h3>
+              <p style={{ fontSize: 13.5, color: C.brume, lineHeight: 1.55, margin: 0 }}>{e.detail}</p>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 22, padding: "18px 22px", background: C.voile, borderLeft: `4px solid ${C.bleu}`, borderRadius: "0 12px 12px 0" }}>
+          <p style={{ fontSize: 14.5, color: C.encre, lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
+            Un engagement qui n'obligerait qu'une seule des deux parties ne serait pas un engagement.
+          </p>
+        </div>
+      </Section>
+
       {/* ---------- CANDIDATURE ---------- */}
       <Section
         id="candidature"
@@ -2800,6 +3035,47 @@ export default function App() {
         >
           Prêt·e à prendre ta place ?
         </h2>
+
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ position: "relative", display: "flex" }}>
+            <div style={{ position: "absolute", top: 19, left: "12.5%", right: "12.5%", height: 2, background: C.voile, zIndex: 0 }} />
+            <div
+              style={{
+                position: "absolute",
+                top: 19,
+                left: "12.5%",
+                height: 2,
+                background: C.teal,
+                zIndex: 0,
+                width: frise.lineWidth,
+                transition: "width 0.4s ease",
+              }}
+            />
+            {frise.etapes.map((e) => (
+              <div key={e.titre} style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 6px" }}>
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: e.dotBg,
+                    border: `2px solid ${e.dotBorder}`,
+                    marginBottom: 12,
+                    flexShrink: 0,
+                  }}
+                >
+                  <e.Icone size={17} color={e.dotColor} weight={e.weight} />
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: e.titleColor, lineHeight: 1.3, marginBottom: 4 }}>{e.titre}</div>
+                <div style={{ fontSize: 12, color: C.brume, lineHeight: 1.4 }}>{e.dateLabel}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div style={{ display: "grid", gap: 22 }}>
           <BandeauCandidature />
           <div style={{ textAlign: "center" }}>
