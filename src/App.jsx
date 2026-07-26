@@ -799,7 +799,7 @@ function calculerResultat(reponses) {
 
 // ---------- Logique du bandeau temporel ----------
 function phaseCandidature(maintenant) {
-  const ouverture = new Date("2026-07-26T00:00:00");
+  const ouverture = new Date("2026-07-27T00:00:00");
   const cloture = new Date("2026-08-02T23:59:59");
   if (maintenant < ouverture) return "avant";
   if (maintenant > cloture) return "apres";
@@ -812,7 +812,7 @@ function formatDateFr(d) {
 
 // ---------- Frise des étapes de la candidature (au-delà de la fenêtre de dépôt) ----------
 function calculerFrise(maintenant) {
-  const ouverture = new Date("2026-07-26T00:00:00");
+  const ouverture = new Date("2026-07-27T00:00:00");
   const cloture = new Date("2026-08-02T23:59:59");
   const instructionFin = new Date("2026-08-10T23:59:59");
   const nomination = new Date("2026-08-14T00:00:00");
@@ -850,12 +850,12 @@ function calculerFrise(maintenant) {
 const PHASE_CONTENU = {
   avant: {
     tag: "Bientôt",
-    titre: "Les candidatures ouvrent le dimanche 26 juillet",
+    titre: "Les candidatures ouvrent le lundi 27 juillet",
     texte: "En attendant, explore les postes et fais le test. Tu seras prêt·e le jour J.",
     couleur: C.teal,
     badgeBg: C.tealFonce,
     badgeTexte: C.blanc,
-    ctaLabel: "Revenir le 26 juillet",
+    ctaLabel: "Revenir le 27 juillet",
     ctaActive: false,
   },
   pendant: {
@@ -1049,7 +1049,7 @@ function BandeauCandidature() {
             fontWeight: 600,
           }}
         >
-          Fenêtre 2026 : dim. 26 juillet 00h00 → dim. 2 août 23h59
+          Fenêtre 2026 : lun. 27 juillet 00h00 → dim. 2 août 23h59
         </div>
       </div>
     </div>
@@ -1645,18 +1645,28 @@ function Test({ onOpenFiche, onCandidater }) {
 // ---------- Formulaire de questions ----------
 function FormulaireQuestions() {
   const [nom, setNom] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [touched, setTouched] = useState(false);
   const [envoye, setEnvoye] = useState(false);
 
   const GOOGLE_FORM_ACTION =
     "https://docs.google.com/forms/d/e/1FAIpQLSe2bmYsPtLK3TVt7S3jekuE9dW2i856ylkBR7-T2WSi5Geyhg/formResponse";
   const CHAMP_PRENOM = "entry.1450628725"; // identifiant du champ Prénom
+  const CHAMP_EMAIL = "entry.84313770"; // identifiant du champ Email
   const CHAMP_QUESTION = "entry.1666902876"; // identifiant du champ Question
 
+  const emailValide = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const enErreur = !message.trim() || !emailValide;
+
   const envoyer = () => {
-    if (!message.trim()) return;
+    if (enErreur) {
+      setTouched(true);
+      return;
+    }
     const data = new URLSearchParams();
     data.append(CHAMP_PRENOM, nom);
+    data.append(CHAMP_EMAIL, email.trim());
     data.append(CHAMP_QUESTION, message);
     // mode "no-cors" : Google renvoie une réponse opaque, on ne peut pas lire le succès,
     // mais la soumission passe. On bascule sur l'écran de confirmation de façon optimiste.
@@ -1692,7 +1702,7 @@ function FormulaireQuestions() {
           Question bien reçue
         </h4>
         <p style={{ color: C.brume, margin: 0, lineHeight: 1.6 }}>
-          On te répond au plus vite. À très bientôt à l'OMAS.
+          On te répond au plus vite par mail. À très bientôt à l'OMAS.
         </p>
       </div>
     );
@@ -1739,6 +1749,33 @@ function FormulaireQuestions() {
           outline: "none",
         }}
       />
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Ton email, pour qu'on te réponde"
+        aria-invalid={touched && !emailValide}
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          fontFamily: FONT,
+          fontSize: 15,
+          padding: "13px 16px",
+          border: `1.5px solid ${touched && !emailValide ? "#D9534F" : C.voile}`,
+          borderRadius: 12,
+          marginBottom: 6,
+          outline: "none",
+        }}
+      />
+      <p
+        style={{
+          fontSize: 12.5,
+          color: touched && !emailValide ? "#D9534F" : C.brume,
+          margin: "0 0 12px",
+        }}
+      >
+        {touched && !emailValide ? "Merci d'indiquer un email valide." : "Pour qu'on puisse te recontacter."}
+      </p>
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -1971,7 +2008,7 @@ function ModaleCandidature({ open, posteInitial, onClose }) {
           <div style={{ background: C.voile, borderRadius: 16, padding: "26px 24px", textAlign: "center" }}>
             <Hourglass size={32} color={C.bleu} />
             <p style={{ fontFamily: FONT, fontSize: 15.5, color: C.encre, lineHeight: 1.6, margin: "14px 0 0", fontWeight: 500 }}>
-              Les candidatures ouvrent le dimanche 26 juillet à 00h00. Reviens à ce moment pour déposer la tienne, ton
+              Les candidatures ouvrent le lundi 27 juillet à 00h00. Reviens à ce moment pour déposer la tienne, ton
               choix de poste restera libre ce jour-là.
             </p>
           </div>
