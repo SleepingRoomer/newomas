@@ -799,7 +799,7 @@ function calculerResultat(reponses) {
 
 // ---------- Logique du bandeau temporel ----------
 function phaseCandidature(maintenant) {
-  const ouverture = new Date("2026-07-27T00:00:00");
+  const ouverture = new Date("2026-07-26T00:00:00");
   const cloture = new Date("2026-08-02T23:59:59");
   if (maintenant < ouverture) return "avant";
   if (maintenant > cloture) return "apres";
@@ -812,7 +812,7 @@ function formatDateFr(d) {
 
 // ---------- Frise des étapes de la candidature (au-delà de la fenêtre de dépôt) ----------
 function calculerFrise(maintenant) {
-  const ouverture = new Date("2026-07-27T00:00:00");
+  const ouverture = new Date("2026-07-26T00:00:00");
   const cloture = new Date("2026-08-02T23:59:59");
   const instructionFin = new Date("2026-08-10T23:59:59");
   const nomination = new Date("2026-08-14T00:00:00");
@@ -850,12 +850,12 @@ function calculerFrise(maintenant) {
 const PHASE_CONTENU = {
   avant: {
     tag: "Bientôt",
-    titre: "Les candidatures ouvrent le lundi 27 juillet",
+    titre: "Les candidatures ouvrent le dimanche 26 juillet",
     texte: "En attendant, explore les postes et fais le test. Tu seras prêt·e le jour J.",
     couleur: C.teal,
     badgeBg: C.tealFonce,
     badgeTexte: C.blanc,
-    ctaLabel: "Revenir le 27 juillet",
+    ctaLabel: "Revenir le 26 juillet",
     ctaActive: false,
   },
   pendant: {
@@ -1049,7 +1049,7 @@ function BandeauCandidature() {
             fontWeight: 600,
           }}
         >
-          Fenêtre 2026 : lun. 27 juillet 00h00 → dim. 2 août 23h59
+          Fenêtre 2026 : dim. 26 juillet 00h00 → dim. 2 août 23h59
         </div>
       </div>
     </div>
@@ -1976,7 +1976,7 @@ function ModaleCandidature({ open, posteInitial, onClose }) {
           <div style={{ background: C.voile, borderRadius: 16, padding: "26px 24px", textAlign: "center" }}>
             <Hourglass size={32} color={C.bleu} />
             <p style={{ fontFamily: FONT, fontSize: 15.5, color: C.encre, lineHeight: 1.6, margin: "14px 0 0", fontWeight: 500 }}>
-              Les candidatures ouvrent le lundi 27 juillet à 00h00. Reviens à ce moment pour déposer la tienne, ton
+              Les candidatures ouvrent le dimanche 26 juillet à 00h00. Reviens à ce moment pour déposer la tienne, ton
               choix de poste restera libre ce jour-là.
             </p>
           </div>
