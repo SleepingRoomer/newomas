@@ -1653,7 +1653,7 @@ function FormulaireQuestions() {
   const GOOGLE_FORM_ACTION =
     "https://docs.google.com/forms/d/e/1FAIpQLSe2bmYsPtLK3TVt7S3jekuE9dW2i856ylkBR7-T2WSi5Geyhg/formResponse";
   const CHAMP_PRENOM = "entry.1450628725"; // identifiant du champ Prénom
-  const CHAMP_EMAIL = "entry.XXXXXXXXXX"; // à remplacer par l'identifiant du champ Email une fois ajouté au Google Form
+  const CHAMP_EMAIL = "entry.84313770"; // identifiant du champ Email
   const CHAMP_QUESTION = "entry.1666902876"; // identifiant du champ Question
 
   const emailValide = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
