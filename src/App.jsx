@@ -1648,15 +1648,10 @@ function FormulaireQuestions() {
   const [message, setMessage] = useState("");
   const [envoye, setEnvoye] = useState(false);
 
-  // ===== BRANCHEMENT GOOGLE FORMS =====
-  // 1. Crée un Google Form avec 2 questions : "Prénom" (réponse courte) et "Question" (paragraphe).
-  // 2. Clique sur les 3 points > "Obtenir le lien pré-rempli", remplis des valeurs test, copie le lien.
-  //    Tu y liras des identifiants du type entry.123456789= pour chaque champ.
-  // 3. Reporte l'URL du formulaire (en remplaçant /viewform par /formResponse) et les 2 identifiants ci-dessous.
   const GOOGLE_FORM_ACTION =
-    "https://docs.google.com/forms/d/e/TON_ID_DE_FORMULAIRE/formResponse";
-  const CHAMP_PRENOM = "entry.0000000000"; // identifiant du champ Prénom
-  const CHAMP_QUESTION = "entry.1111111111"; // identifiant du champ Question
+    "https://docs.google.com/forms/d/e/1FAIpQLSe2bmYsPtLK3TVt7S3jekuE9dW2i856ylkBR7-T2WSi5Geyhg/formResponse";
+  const CHAMP_PRENOM = "entry.1450628725"; // identifiant du champ Prénom
+  const CHAMP_QUESTION = "entry.1666902876"; // identifiant du champ Question
 
   const envoyer = () => {
     if (!message.trim()) return;
