@@ -800,7 +800,7 @@ function calculerResultat(reponses) {
 // ---------- Logique du bandeau temporel ----------
 function phaseCandidature(maintenant) {
   const ouverture = new Date("2026-07-27T00:00:00");
-  const cloture = new Date("2026-08-02T23:59:59");
+  const cloture = new Date("2026-08-13T12:00:00");
   if (maintenant < ouverture) return "avant";
   if (maintenant > cloture) return "apres";
   return "pendant";
@@ -813,13 +813,15 @@ function formatDateFr(d) {
 // ---------- Frise des étapes de la candidature (au-delà de la fenêtre de dépôt) ----------
 function calculerFrise(maintenant) {
   const ouverture = new Date("2026-07-27T00:00:00");
-  const cloture = new Date("2026-08-02T23:59:59");
-  const instructionFin = new Date("2026-08-10T23:59:59");
-  const nomination = new Date("2026-08-14T00:00:00");
+  const cloture = new Date("2026-08-13T12:00:00");
+  const instructionFin = new Date("2026-08-14T17:00:00");
+  const nomination = new Date("2026-08-14T20:00:00");
   const debutInstruction = new Date(cloture.getTime() + 24 * 3600 * 1000);
   const jalons = [ouverture, cloture, instructionFin, nomination];
   const idx = jalons.findIndex((d) => maintenant < d);
   const activeIdx = idx === -1 ? jalons.length : idx;
+
+  const memeJourInstruction = debutInstruction.toDateString() === instructionFin.toDateString();
 
   const definitions = [
     { titre: "Ouverture des candidatures", Icone: DoorOpen, dateLabel: formatDateFr(ouverture) },
@@ -827,7 +829,9 @@ function calculerFrise(maintenant) {
     {
       titre: "Instruction & examen",
       Icone: MagnifyingGlass,
-      dateLabel: `${formatDateFr(debutInstruction)} – ${formatDateFr(instructionFin)}`,
+      dateLabel: memeJourInstruction
+        ? formatDateFr(instructionFin)
+        : `${formatDateFr(debutInstruction)} – ${formatDateFr(instructionFin)}`,
     },
     { titre: "Nomination", Icone: SealCheck, dateLabel: formatDateFr(nomination) },
   ];
@@ -861,7 +865,7 @@ const PHASE_CONTENU = {
   pendant: {
     tag: "C'est ouvert",
     titre: "Les candidatures sont ouvertes",
-    texte: "Tu as jusqu'au dimanche 2 août à 23h59 pour déposer la tienne. Repère ton poste et lance-toi.",
+    texte: "Tu as jusqu'au jeudi 13 août à midi pour déposer la tienne. Repère ton poste et lance-toi.",
     couleur: C.or,
     badgeBg: C.or,
     badgeTexte: C.encre,
@@ -1049,7 +1053,7 @@ function BandeauCandidature() {
             fontWeight: 600,
           }}
         >
-          Fenêtre 2026 : lun. 27 juillet 00h00 → dim. 2 août 23h59
+          Fenêtre 2026 : lun. 27 juillet 00h00 → jeu. 13 août 12h00
         </div>
       </div>
     </div>
