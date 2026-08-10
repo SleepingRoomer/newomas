@@ -814,12 +814,14 @@ function formatDateFr(d) {
 function calculerFrise(maintenant) {
   const ouverture = new Date("2026-07-27T00:00:00");
   const cloture = new Date("2026-08-13T12:00:00");
-  const instructionFin = new Date("2026-08-21T23:59:59");
-  const nomination = new Date("2026-08-25T00:00:00");
+  const instructionFin = new Date("2026-08-14T17:00:00");
+  const nomination = new Date("2026-08-14T20:00:00");
   const debutInstruction = new Date(cloture.getTime() + 24 * 3600 * 1000);
   const jalons = [ouverture, cloture, instructionFin, nomination];
   const idx = jalons.findIndex((d) => maintenant < d);
   const activeIdx = idx === -1 ? jalons.length : idx;
+
+  const memeJourInstruction = debutInstruction.toDateString() === instructionFin.toDateString();
 
   const definitions = [
     { titre: "Ouverture des candidatures", Icone: DoorOpen, dateLabel: formatDateFr(ouverture) },
@@ -827,7 +829,9 @@ function calculerFrise(maintenant) {
     {
       titre: "Instruction & examen",
       Icone: MagnifyingGlass,
-      dateLabel: `${formatDateFr(debutInstruction)} – ${formatDateFr(instructionFin)}`,
+      dateLabel: memeJourInstruction
+        ? formatDateFr(instructionFin)
+        : `${formatDateFr(debutInstruction)} – ${formatDateFr(instructionFin)}`,
     },
     { titre: "Nomination", Icone: SealCheck, dateLabel: formatDateFr(nomination) },
   ];
