@@ -348,6 +348,13 @@ const ROLES = {
       "Internes, communauté professionnelle (Le Club), relations institutionnelles : tu portes un public que l'antenne ne couvre pas.",
     entree: "Échelon localité : nomination après appel à candidatures.",
   },
+  spontanee: {
+    nom: "Candidature spontanée",
+    cercle: 1,
+    accent: C.brume,
+    pitch: "Une compétence à mettre à disposition de l'OMAS, en dehors des postes listés ici.",
+    entree: "Candidature libre, examinée au cas par cas.",
+  },
 };
 
 // ---------- Fiches de poste complètes (cercle 2 uniquement) ----------
@@ -503,6 +510,7 @@ const POSTE_LIST = [
   "delLogistique",
   "delComm",
   "refPromo",
+  "spontanee",
 ];
 
 const POSTE_QUESTIONS = {
@@ -538,6 +546,10 @@ const POSTE_QUESTIONS = {
     competence: "Précisez votre promotion et pourquoi vous voulez être ce point de contact.",
     valeurs: "Qu'est-ce que vous aimeriez qu'un camarade de votre promo ressente en sachant qu'il peut se tourner vers vous ?",
   },
+  spontanee: {
+    competence: "Décrivez la compétence ou l'expertise que vous souhaitez mettre à disposition de l'OMAS, même si elle ne correspond à aucun poste listé ici.",
+    valeurs: "Qu'est-ce qui vous donne envie de vous engager à l'OMAS, en dehors des postes proposés ?",
+  },
 };
 
 // ==== CONFIGURATION GOOGLE FORM (candidature) ====
@@ -561,6 +573,7 @@ const GOOGLE_FORM_FIELDS = {
     delLogistique: { competence: "entry.1586038474", valeurs: "entry.932272086" },
     delComm: { competence: "entry.1830815083", valeurs: "entry.11561215" },
     refPromo: { competence: "entry.1839402481", valeurs: "entry.1788734151" },
+    spontanee: { competence: "entry.1644252405", valeurs: "entry.187202703" },
   },
 };
 
@@ -799,8 +812,8 @@ function calculerResultat(reponses) {
 
 // ---------- Logique du bandeau temporel ----------
 function phaseCandidature(maintenant) {
-  const ouverture = new Date("2026-07-27T00:00:00");
-  const cloture = new Date("2026-08-13T12:00:00");
+  const ouverture = new Date("2026-08-28T21:00:00");
+  const cloture = new Date("2026-09-06T23:59:59");
   if (maintenant < ouverture) return "avant";
   if (maintenant > cloture) return "apres";
   return "pendant";
@@ -812,10 +825,10 @@ function formatDateFr(d) {
 
 // ---------- Frise des étapes de la candidature (au-delà de la fenêtre de dépôt) ----------
 function calculerFrise(maintenant) {
-  const ouverture = new Date("2026-07-27T00:00:00");
-  const cloture = new Date("2026-08-13T12:00:00");
-  const instructionFin = new Date("2026-08-14T17:00:00");
-  const nomination = new Date("2026-08-14T20:00:00");
+  const ouverture = new Date("2026-08-28T21:00:00");
+  const cloture = new Date("2026-09-06T23:59:59");
+  const instructionFin = new Date("2026-09-07T20:00:00");
+  const nomination = new Date("2026-09-07T22:00:00");
   const debutInstruction = new Date(cloture.getTime() + 24 * 3600 * 1000);
   const jalons = [ouverture, cloture, instructionFin, nomination];
   const idx = jalons.findIndex((d) => maintenant < d);
@@ -854,18 +867,18 @@ function calculerFrise(maintenant) {
 const PHASE_CONTENU = {
   avant: {
     tag: "Bientôt",
-    titre: "Les candidatures ouvrent le lundi 27 juillet",
+    titre: "Les candidatures ouvrent ce soir à 21h00",
     texte: "En attendant, explore les postes et fais le test. Tu seras prêt·e le jour J.",
     couleur: C.teal,
     badgeBg: C.tealFonce,
     badgeTexte: C.blanc,
-    ctaLabel: "Revenir le 27 juillet",
+    ctaLabel: "Revenir ce soir à 21h",
     ctaActive: false,
   },
   pendant: {
     tag: "C'est ouvert",
     titre: "Les candidatures sont ouvertes",
-    texte: "Tu as jusqu'au jeudi 13 août à midi pour déposer la tienne. Repère ton poste et lance-toi.",
+    texte: "Tu as jusqu'au dimanche 6 septembre à 23h59 pour déposer la tienne. Repère ton poste et lance-toi.",
     couleur: C.or,
     badgeBg: C.or,
     badgeTexte: C.encre,
@@ -1053,7 +1066,7 @@ function BandeauCandidature() {
             fontWeight: 600,
           }}
         >
-          Fenêtre 2026 : lun. 27 juillet 00h00 → jeu. 13 août 12h00
+          Fenêtre 2026 : ven. 28 août 21h00 → dim. 6 septembre 23h59
         </div>
       </div>
     </div>
@@ -2012,7 +2025,7 @@ function ModaleCandidature({ open, posteInitial, onClose }) {
           <div style={{ background: C.voile, borderRadius: 16, padding: "26px 24px", textAlign: "center" }}>
             <Hourglass size={32} color={C.bleu} />
             <p style={{ fontFamily: FONT, fontSize: 15.5, color: C.encre, lineHeight: 1.6, margin: "14px 0 0", fontWeight: 500 }}>
-              Les candidatures ouvrent le lundi 27 juillet à 00h00. Reviens à ce moment pour déposer la tienne, ton
+              Les candidatures ouvrent ce soir à 21h00. Reviens à ce moment pour déposer la tienne, ton
               choix de poste restera libre ce jour-là.
             </p>
           </div>
