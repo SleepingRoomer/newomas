@@ -573,9 +573,7 @@ const GOOGLE_FORM_FIELDS = {
     delLogistique: { competence: "entry.1586038474", valeurs: "entry.932272086" },
     delComm: { competence: "entry.1830815083", valeurs: "entry.11561215" },
     refPromo: { competence: "entry.1839402481", valeurs: "entry.1788734151" },
-    // À remplacer par les identifiants du Google Form une fois les 2 questions "Candidature
-    // spontanée" (compétence / valeurs) ajoutées au formulaire.
-    spontanee: { competence: "entry.XXXXXXXXXX", valeurs: "entry.YYYYYYYYYY" },
+    spontanee: { competence: "entry.1644252405", valeurs: "entry.187202703" },
   },
 };
 
