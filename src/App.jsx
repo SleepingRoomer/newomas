@@ -812,8 +812,10 @@ function calculerResultat(reponses) {
 
 // ---------- Logique du bandeau temporel ----------
 function phaseCandidature(maintenant) {
-  const ouverture = new Date("2026-08-28T21:00:00");
-  const cloture = new Date("2026-09-06T23:59:59");
+  const ouverture = new Date("2026-09-13T00:00:00");
+  // Pas de date de clôture fixée pour l'instant (réouverture sans durée limitée) :
+  // sentinelle lointaine, à remplacer par une vraie date de clôture le moment venu.
+  const cloture = new Date("2099-01-01T00:00:00");
   if (maintenant < ouverture) return "avant";
   if (maintenant > cloture) return "apres";
   return "pendant";
@@ -825,28 +827,22 @@ function formatDateFr(d) {
 
 // ---------- Frise des étapes de la candidature (au-delà de la fenêtre de dépôt) ----------
 function calculerFrise(maintenant) {
-  const ouverture = new Date("2026-08-28T21:00:00");
-  const cloture = new Date("2026-09-06T23:59:59");
-  const instructionFin = new Date("2026-09-07T20:00:00");
-  const nomination = new Date("2026-09-07T22:00:00");
-  const debutInstruction = new Date(cloture.getTime() + 24 * 3600 * 1000);
+  const ouverture = new Date("2026-09-13T00:00:00");
+  // Dates de clôture, instruction et nomination pas encore fixées (réouverture sans durée
+  // limitée) : sentinelles lointaines pour garder l'ordre chronologique, texte générique
+  // en attendant une vraie date.
+  const cloture = new Date("2099-01-01T00:00:00");
+  const instructionFin = new Date("2099-01-02T00:00:00");
+  const nomination = new Date("2099-01-03T00:00:00");
   const jalons = [ouverture, cloture, instructionFin, nomination];
   const idx = jalons.findIndex((d) => maintenant < d);
   const activeIdx = idx === -1 ? jalons.length : idx;
 
-  const memeJourInstruction = debutInstruction.toDateString() === instructionFin.toDateString();
-
   const definitions = [
     { titre: "Ouverture des candidatures", Icone: DoorOpen, dateLabel: formatDateFr(ouverture) },
-    { titre: "Clôture des candidatures", Icone: LockKey, dateLabel: formatDateFr(cloture) },
-    {
-      titre: "Instruction & examen",
-      Icone: MagnifyingGlass,
-      dateLabel: memeJourInstruction
-        ? formatDateFr(instructionFin)
-        : `${formatDateFr(debutInstruction)} – ${formatDateFr(instructionFin)}`,
-    },
-    { titre: "Nomination", Icone: SealCheck, dateLabel: formatDateFr(nomination) },
+    { titre: "Clôture des candidatures", Icone: LockKey, dateLabel: "Aucune date fixée" },
+    { titre: "Instruction & examen", Icone: MagnifyingGlass, dateLabel: "Communiqué après clôture" },
+    { titre: "Nomination", Icone: SealCheck, dateLabel: "Communiqué après clôture" },
   ];
 
   const etapes = definitions.map((def, i) => {
@@ -867,18 +863,18 @@ function calculerFrise(maintenant) {
 const PHASE_CONTENU = {
   avant: {
     tag: "Bientôt",
-    titre: "Les candidatures ouvrent ce soir à 21h00",
+    titre: "Les candidatures ouvrent bientôt",
     texte: "En attendant, explore les postes et fais le test. Tu seras prêt·e le jour J.",
     couleur: C.teal,
     badgeBg: C.tealFonce,
     badgeTexte: C.blanc,
-    ctaLabel: "Revenir ce soir à 21h",
+    ctaLabel: "Revenir bientôt",
     ctaActive: false,
   },
   pendant: {
     tag: "C'est ouvert",
     titre: "Les candidatures sont ouvertes",
-    texte: "Tu as jusqu'au dimanche 6 septembre à 23h59 pour déposer la tienne. Repère ton poste et lance-toi.",
+    texte: "Aucune date de clôture n'est fixée pour l'instant : dépose ta candidature quand tu veux. Repère ton poste et lance-toi.",
     couleur: C.or,
     badgeBg: C.or,
     badgeTexte: C.encre,
@@ -1066,7 +1062,7 @@ function BandeauCandidature() {
             fontWeight: 600,
           }}
         >
-          Fenêtre 2026 : ven. 28 août 21h00 → dim. 6 septembre 23h59
+          Ouvertes depuis le 13 septembre, sans date de clôture annoncée pour l'instant
         </div>
       </div>
     </div>
@@ -2025,7 +2021,7 @@ function ModaleCandidature({ open, posteInitial, onClose }) {
           <div style={{ background: C.voile, borderRadius: 16, padding: "26px 24px", textAlign: "center" }}>
             <Hourglass size={32} color={C.bleu} />
             <p style={{ fontFamily: FONT, fontSize: 15.5, color: C.encre, lineHeight: 1.6, margin: "14px 0 0", fontWeight: 500 }}>
-              Les candidatures ouvrent ce soir à 21h00. Reviens à ce moment pour déposer la tienne, ton
+              Les candidatures ouvrent bientôt. Reviens à ce moment pour déposer la tienne, ton
               choix de poste restera libre ce jour-là.
             </p>
           </div>
